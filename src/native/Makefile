@@ -34,6 +34,7 @@ ifeq ($(PLATFORM),Darwin)
 	# this is currently 64-bit only
 	LDFLAGS += -L../../library/macosx
 	LDFLAGS += -lgstgl-1.0.0 -lgstreamer-1.0.0 -lgstapp-1.0.0 -lglib-2.0.0 -lgobject-2.0.0
+	LDFLAGS += -framework CoreFoundation
 	TARGET_DIR = macosx
 	# extension can't be .so on OS X
 	LDFLAGS += -install_name @loader_path/libglvideo.jnilib

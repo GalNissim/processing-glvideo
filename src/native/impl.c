@@ -39,6 +39,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <gst/gst.h>
 #include <gst/gl/gl.h>
 #ifdef __APPLE__
+#include <CoreFoundation/CFRunLoop.h>
 #include <gst/gl/cocoa/gstglcontext_cocoa.h>
 #elif
 #include <gst/gl/egl/gstgldisplay_egl.h>
@@ -374,8 +375,18 @@ glvideo_mainloop (void * data) {
 
 static void
 wait_for_state_change (GLVIDEO_STATE_T * state) {
+  // DEBUG
+  CFRunLoopRef cur = CFRunLoopGetCurrent ();
+  CFRunLoopRef main = CFRunLoopGetMain ();
+  fprintf(stderr, "current %p, main %p\n", cur, main);
+
   // this waits until any asynchronous state changes have completed (or failed)
-  gst_element_get_state (state->pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
+  GstStateChangeReturn ret;
+  do {
+    CFRunLoopRunInMode (CFSTR ("kCFRunLoopDefaultMode"), 0.1, false);
+    ret = gst_element_get_state (state->pipeline, NULL, NULL, 0);
+  } while (ret == GST_STATE_CHANGE_ASYNC);
+
   // DEBUG: output a .dot file with the current pipeline, trigger with one of many getters that call wait_for_state_change
   // DEBUG: make sure to set GST_DEBUG_DUMP_DOT_DIR environment variable as well
   //GST_DEBUG_BIN_TO_DOT_FILE (GST_BIN (state->pipeline), GST_DEBUG_GRAPH_SHOW_ALL, "playing");
