@@ -383,7 +383,8 @@ wait_for_state_change (GLVIDEO_STATE_T * state) {
   // this waits until any asynchronous state changes have completed (or failed)
   GstStateChangeReturn ret;
   do {
-    CFRunLoopRunInMode (CFSTR ("kCFRunLoopDefaultMode"), 0.1, false);
+    //CFRunLoopRunInMode (CFSTR ("kCFRunLoopDefaultMode"), 0.1, false);
+    CFRunLoopWakeUp (main);
     ret = gst_element_get_state (state->pipeline, NULL, NULL, 0);
   } while (ret == GST_STATE_CHANGE_ASYNC);
 
