@@ -46,4 +46,11 @@ public class GLCapture extends GLVideo {
       throw new RuntimeException("Could not open capture device");
     }
   }
+  public GLCapture(PApplet parent, String pipeline) {
+    super(parent);
+    handle = gstreamer_open_pipeline(pipeline);
+    if (handle == 0) {
+      throw new RuntimeException("Could not open capture device");
+    }
+  }
 }
