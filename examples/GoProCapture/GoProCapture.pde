@@ -2,21 +2,22 @@
  *  Please note that the code for interfacing with Capture devices
  *  will change in future releases of this library. This is just a
  *  filler till something more permanent becomes available.
+/**
+ *  This will display live video from a GoPro camera connected via WiFi.
+ *  Code & detective work by Gal Nissim & Andres Colubri.
  *
- *  For use with the Raspberry Pi camera, make sure the camera is
- *  enabled in the Raspberry Pi Configuration tool and add the line
- *  "bcm2835_v4l2" (without quotation marks) to the file
- *  /etc/modules. After a restart you should be able to see the
- *  camera device as /dev/video0.
+ *  More about GStreamer pipelines:
+ *  https://gstreamer.freedesktop.org/data/doc/gstreamer/head/manual/html/
  */
 
 import gohai.glvideo.*;
-GLCapture gopro;
+GLVideo gopro;
+int NO_SYNC = 2;
 
 void setup() {
   size(320, 240, P2D);
 
-  gopro = new GLCapture(this, "udpsrc port=8554 ! tsdemux ! decodebin");
+  gopro = new GLVideo(this, "udpsrc port=8554 ! tsdemux ! decodebin", NO_SYNC);
   gopro.play();
 }
 
@@ -26,5 +27,6 @@ void draw() {
     gopro.read();
   }
   image(gopro, 0, 0, width, height);
-  ellipse (mouseX, mouseY, 50,50);
-}
+  ellipse (mouseX, mouseY, 50, 50);
+   
+  }
